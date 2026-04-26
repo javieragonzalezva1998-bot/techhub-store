@@ -53,7 +53,7 @@ CREATE TABLE detalles_orden (
 );
 
 INSERT INTO usuarios (nombre, email, password, rol) VALUES
-('Administrador', 'admin@techhub.cl', '$2y$10$wH2Nj0vTn3ly0O30G3cZiebiRzUEkGBQpJnYimRFXTntSJOr7qyCi', 'admin'),
+('Administrador', 'admin@techhub.cl', '$2y$10$lWYdVsdsYIzvjkkyjllsSeQVvfkSm07y4ZS36PG/IK/F9NrLcmAp2', 'admin'),
 ('Cliente Demo', 'cliente@techhub.cl', '$2y$10$wH2Nj0vTn3ly0O30G3cZiebiRzUEkGBQpJnYimRFXTntSJOr7qyCi', 'cliente');
 
 INSERT INTO productos (nombre, descripcion, precio, stock, categoria, imagen) VALUES
