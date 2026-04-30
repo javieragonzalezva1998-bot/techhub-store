@@ -2,8 +2,16 @@
 
 <h2>Crear producto</h2>
 
+<?php if (isset($_SESSION["error"])): ?>
+    <div class="alert alert-danger">
+        <?= $_SESSION["error"]; ?>
+    </div>
+    <?php unset($_SESSION["error"]); ?>
+<?php endif; ?>
+
 <form method="POST"
       action="index.php?controller=adminProducto&action=store"
+      enctype="multipart/form-data"
       class="card p-4 shadow-sm">
 
     <div class="mb-3">
@@ -31,6 +39,14 @@
         <input name="categoria"
                class="form-control"
                required>
+    </div>
+
+    <div class="mb-3">
+        <label>Imagen</label>
+        <input type="file"
+               name="imagen"
+               accept="image/*"
+               class="form-control">
     </div>
 
     <div class="mb-3">

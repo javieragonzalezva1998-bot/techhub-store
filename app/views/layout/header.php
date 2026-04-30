@@ -37,13 +37,11 @@ if (isset($_SESSION["carrito"])) {
                         Panel admin
                     </a>
 
-                <?php else: ?>
-
+                
+                <?php endif; ?>
                     <a href="index.php?controller=orden&action=historial" class="btn btn-outline-light">
                         Historial
                     </a>
-
-                <?php endif; ?>
 
                 <a href="index.php?controller=auth&action=logout" class="btn btn-outline-light">
                     Cerrar sesión

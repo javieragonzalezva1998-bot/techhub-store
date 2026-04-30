@@ -4,6 +4,15 @@
     <div class="card-body">
         <h2 class="card-title"><?php echo $producto["nombre"]; ?></h2>
 
+        <?php if (!empty($producto["imagen"])): ?>
+            <div class="mb-4 text-center">
+                <img src="public/img/productos/<?php echo $producto["imagen"]; ?>"
+                     alt="<?php echo $producto["nombre"]; ?>"
+                     class="img-fluid"
+                     style="max-height: 320px; object-fit: contain;" />
+            </div>
+        <?php endif; ?>
+
         <p class="card-text">
             <?php echo $producto["descripcion"]; ?>
         </p>

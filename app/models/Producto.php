@@ -45,46 +45,67 @@ class Producto {
         return $stmt->get_result();
     }
 
-    public function crear($nombre, $descripcion, $precio, $categoria, $stock) {
+    public function crear($nombre, $descripcion, $precio, $categoria, $stock, $imagen = null) {
 
         $sql = "INSERT INTO productos
-                (nombre, descripcion, precio, categoria, stock)
-                VALUES (?, ?, ?, ?, ?)";
+                (nombre, descripcion, precio, categoria, stock, imagen)
+                VALUES (?, ?, ?, ?, ?, ?)";
     
         $stmt = $this->conn->prepare($sql);
     
         $stmt->bind_param(
-            "ssdsi",
-            $nombre,
-            $descripcion,
-            $precio,
-            $categoria,
-            $stock
-        );
-    
-        return $stmt->execute();
-    }
-
-    public function actualizar($id, $nombre, $descripcion, $precio, $categoria, $stock) {
-
-        $sql = "UPDATE productos
-                SET nombre = ?, descripcion = ?, precio = ?, categoria = ?, stock = ?
-                WHERE id = ?";
-    
-        $stmt = $this->conn->prepare($sql);
-    
-        $stmt->bind_param(
-            "ssdsii",
+            "ssdsis",
             $nombre,
             $descripcion,
             $precio,
             $categoria,
             $stock,
-            $id
+            $imagen
         );
     
         return $stmt->execute();
     }
+
+    public function actualizar($id, $nombre, $descripcion, $precio, $categoria, $stock, $imagen = null) {
+        if ($imagen !== null) {
+            $sql = "UPDATE productos
+                    SET nombre = ?, descripcion = ?, precio = ?, categoria = ?, stock = ?, imagen = ?
+                    WHERE id = ?";
+    
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->bind_param(
+                "ssdsisi",
+                $nombre,
+                $descripcion,
+                $precio,
+                $categoria,
+                $stock,
+                $imagen,
+                $id
+            );
+        } else {
+            $sql = "UPDATE productos
+                    SET nombre = ?, descripcion = ?, precio = ?, categoria = ?, stock = ?
+                    WHERE id = ?";
+    
+            $stmt = $this->conn->prepare($sql);
+    
+            $stmt->bind_param(
+                "ssdsii",
+                $nombre,
+                $descripcion,
+                $precio,
+                $categoria,
+                $stock,
+                $id
+            );
+        }
+    
+        return $stmt->execute();
+    }
+
+    
 
     public function eliminar($id) {
 

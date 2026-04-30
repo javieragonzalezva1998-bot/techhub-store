@@ -12,6 +12,43 @@ class AdminProductoController {
         }
     }
 
+    private function subirImagen($archivo) {
+        if (!isset($archivo) || $archivo["error"] === UPLOAD_ERR_NO_FILE) {
+            return null;
+        }
+
+        if ($archivo["error"] !== UPLOAD_ERR_OK) {
+            return null;
+        }
+
+        $validMime = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+        $validExt = ["jpg", "jpeg", "png", "gif", "webp"];
+
+        $info = getimagesize($archivo["tmp_name"]);
+        if ($info === false || !in_array($info["mime"], $validMime)) {
+            return null;
+        }
+
+        $extension = strtolower(pathinfo($archivo["name"], PATHINFO_EXTENSION));
+        if (!in_array($extension, $validExt)) {
+            return null;
+        }
+
+        $uploadsDir = dirname(__DIR__, 2) . "/public/img/productos/";
+        if (!is_dir($uploadsDir)) {
+            mkdir($uploadsDir, 0755, true);
+        }
+
+        $nombreArchivo = uniqid("prod_", true) . "." . $extension;
+        $rutaDestino = $uploadsDir . $nombreArchivo;
+
+        if (move_uploaded_file($archivo["tmp_name"], $rutaDestino)) {
+            return $nombreArchivo;
+        }
+
+        return null;
+    }
+
     public function index() {
         
         $this->validarAdmin();
@@ -36,6 +73,16 @@ class AdminProductoController {
         $precio = $_POST["precio"];
         $categoria = $_POST["categoria"];
         $stock = $_POST["stock"];
+
+        $imagen = null;
+        if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] !== UPLOAD_ERR_NO_FILE) {
+            $imagen = $this->subirImagen($_FILES["imagen"]);
+            if (!$imagen) {
+                $_SESSION["error"] = "El archivo de imagen no es válido. Usa JPG, PNG, GIF o WEBP.";
+                header("Location: index.php?controller=adminProducto&action=create");
+                exit;
+            }
+        }
     
         $productoModel = new Producto();
     
@@ -44,7 +91,8 @@ class AdminProductoController {
             $descripcion,
             $precio,
             $categoria,
-            $stock
+            $stock,
+            $imagen
         );
     
         header("Location: index.php?controller=adminProducto&action=index");
@@ -79,6 +127,24 @@ class AdminProductoController {
         $stock = $_POST["stock"];
     
         $productoModel = new Producto();
+        $productoActual = $productoModel->obtenerProductoPorId($id);
+
+        $imagen = null;
+        if (isset($_FILES["imagen"]) && $_FILES["imagen"]["error"] !== UPLOAD_ERR_NO_FILE) {
+            $imagen = $this->subirImagen($_FILES["imagen"]);
+            if (!$imagen) {
+                $_SESSION["error"] = "El archivo de imagen no es válido. Usa JPG, PNG, GIF o WEBP.";
+                header("Location: index.php?controller=adminProducto&action=edit&id={$id}");
+                exit;
+            }
+
+            if (!empty($productoActual["imagen"])) {
+                $rutaAntigua = dirname(__DIR__, 2) . "/public/img/productos/" . $productoActual["imagen"];
+                if (file_exists($rutaAntigua)) {
+                    unlink($rutaAntigua);
+                }
+            }
+        }
     
         $productoModel->actualizar(
             $id,
@@ -86,7 +152,8 @@ class AdminProductoController {
             $descripcion,
             $precio,
             $categoria,
-            $stock
+            $stock,
+            $imagen
         );
     
         header("Location: index.php?controller=adminProducto&action=index");
